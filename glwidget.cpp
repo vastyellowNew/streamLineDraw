@@ -145,7 +145,7 @@ void GLWidget::paintGL()
                     glDisable(GL_TEXTURE_1D);
                     GLWidget::drawBox(floor(xLoc), floor(yLoc), floor(zLoc) );
                     float sc = 10;
-                    glColor3f(1,0,0);
+                    glColor3f(0,1,0);
                     glBegin(GL_LINES);
                     glVertex3f(xLoc,yLoc,zLoc);
                     glVertex3f(xLoc+(mData->getXVec(xLoc,yLoc,zLoc))*sc,yLoc+(mData->getYVec(xLoc,yLoc,zLoc))*sc,zLoc+(mData->getZVec(xLoc,yLoc,zLoc))*sc);
