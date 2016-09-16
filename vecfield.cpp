@@ -206,17 +206,9 @@ float* vecField::getNVec(float x_, float y_, float z_)
 
 }
 
-
-float vecField::getXVec(float x_, float y_, float z_)
+float vecField::interoplate(float x_, float y_, float z_, float* cellV)
 {
-    int xCell = floor(x_);
-    int yCell = floor(y_);
-    int zCell = floor(z_);
-    float xLoc = x_ - xCell;
-    float yLoc = y_ - yCell;
-    float zLoc = z_ - zCell;
-    if(xLoc == 0 && yLoc ==0 && zLoc ==0)
-        return vecField::getXVec(xCell, yCell, zCell);
+
     //
     //		   n8____________n7
     //		   /|            /|
@@ -233,49 +225,56 @@ float vecField::getXVec(float x_, float y_, float z_)
     //		+y = n1 to n4
     //		+z = n1 to n5
     //
-
-    float xCel1Val = vecField::getXVec(xCell, yCell, zCell);
-
-    float xCel2Val = vecField::getXVec(xCell+1, yCell, zCell);
-
-    float xCel3Val = vecField::getXVec(xCell+1, yCell+1, zCell);
-
-    float xCel4Val = vecField::getXVec(xCell, yCell+1, zCell);
-
-    float xCel5Val = vecField::getXVec(xCell, yCell, zCell+1);
-
-    float xCel6Val = vecField::getXVec(xCell+1, yCell, zCell+1);
-
-    float xCel7Val = vecField::getXVec(xCell+1, yCell+1, zCell+1);
-
-    float xCel8Val = vecField::getXVec(xCell, yCell+1, zCell+1);
-
     //      e1 = n1-n2
     //      e2 = n4-n3
     //      e3 = n5-n6
     //      e4 = n8-n7
 
-    float xEdg1Val = xCel1Val+(xCel2Val-xCel1Val)*xLoc;
+    float Edg1Val = cellV[0]+(cellV[1]-cellV[0])*x_;
 
-    float xEdg2Val = xCel4Val+(xCel3Val-xCel4Val)*xLoc;
+    float Edg2Val = cellV[3]+(cellV[2]-cellV[3])*x_;
 
-    float xEdg3Val = xCel5Val+(xCel6Val-xCel5Val)*xLoc;
+    float Edg3Val = cellV[4]+(cellV[5]-cellV[4])*x_;
 
-    float xEdg4Val = xCel8Val+(xCel7Val-xCel8Val)*xLoc;
+    float Edg4Val = cellV[7]+(cellV[6]-cellV[7])*x_;
 
     //      face1 = e1-e2 = n1-n2-n3-n4
     //      face2 = e3-e4 = n5-n6-n7-n8
 
-    float xFac1 = xEdg1Val+(xEdg2Val-xEdg1Val)*yLoc;
+    float Fac1 = Edg1Val+(Edg2Val-Edg1Val)*y_;
 
-    float xFac2 = xEdg3Val+(xEdg4Val-xEdg3Val)*yLoc;
+    float Fac2 = Edg3Val+(Edg4Val-Edg3Val)*y_;
 
     //
     //
 
-    float xVal = xFac1+(xFac2-xFac1)*zLoc;
+    float Val = Fac1+(Fac2-Fac1)*z_;
 
-    return xVal;
+    return Val;
+}
+
+float vecField::getXVec(float x_, float y_, float z_)
+{
+    int xCell = floor(x_);
+    int yCell = floor(y_);
+    int zCell = floor(z_);
+    float xLoc = x_ - xCell;
+    float yLoc = y_ - yCell;
+    float zLoc = z_ - zCell;
+    if(xLoc == 0 && yLoc ==0 && zLoc ==0)
+        return vecField::getXVec(xCell, yCell, zCell);
+
+    float vertex[8];
+
+    vertex[0] = vecField::getXVec(xCell, yCell, zCell);
+    vertex[1] = vecField::getXVec(xCell+1, yCell, zCell);
+    vertex[2] = vecField::getXVec(xCell+1, yCell+1, zCell);
+    vertex[3] = vecField::getXVec(xCell, yCell+1, zCell);
+    vertex[4] = vecField::getXVec(xCell, yCell, zCell+1);
+    vertex[5] = vecField::getXVec(xCell+1, yCell, zCell+1);
+    vertex[6] = vecField::getXVec(xCell+1, yCell+1, zCell+1);
+    vertex[7] = vecField::getXVec(xCell, yCell+1, zCell+1);
+    return vecField::interoplate(xLoc, yLoc, zLoc, vertex);
 }
 
 float vecField::getYVec(float x_, float y_, float z_)
@@ -289,66 +288,17 @@ float vecField::getYVec(float x_, float y_, float z_)
     if(xLoc == 0 && yLoc ==0 && zLoc ==0)
             return vecField::getYVec(xCell, yCell, zCell);
 
-    //
-    //		   n8____________n7
-    //		   /|            /|
-    //		  / |           / |
-    //		 /  |          /  |
-    //    n5/___________n6/  _|
-    //		|   /n4       |   /n3
-    //		|  /          |  /
-    //		| /           | /
-    //		|/____________|/
-    //      n1            n2
-    //
-    //		+x = n1 to n2
-    //		+y = n1 to n4
-    //		+z = n1 to n5
-    //
+    float vertex[8];
 
-    float yCel1Val = vecField::getYVec(xCell, yCell, zCell);
-
-    float yCel2Val = vecField::getYVec(xCell+1, yCell, zCell);
-
-    float yCel3Val = vecField::getYVec(xCell+1, yCell+1, zCell);
-
-    float yCel4Val = vecField::getYVec(xCell, yCell+1, zCell);
-
-    float yCel5Val = vecField::getYVec(xCell, yCell, zCell+1);
-
-    float yCel6Val = vecField::getYVec(xCell+1, yCell, zCell+1);
-
-    float yCel7Val = vecField::getYVec(xCell+1, yCell+1, zCell)+1;
-
-    float yCel8Val = vecField::getYVec(xCell, yCell+1, zCell+1);
-
-    //      e1 = n1-n2
-    //      e2 = n4-n3
-    //      e3 = n5-n6
-    //      e4 = n8-n7
-
-    float yEdg1Val = yCel1Val+(yCel2Val-yCel1Val)*xLoc;
-
-    float yEdg2Val = yCel4Val+(yCel3Val-yCel4Val)*xLoc;
-
-    float yEdg3Val = yCel5Val+(yCel6Val-yCel5Val)*xLoc;
-
-    float yEdg4Val = yCel8Val+(yCel7Val-yCel8Val)*xLoc;
-
-    //      face1 = e1-e2 = n1-n2-n3-n4
-    //      face2 = e3-e4 = n5-n6-n7-n8
-
-    float yFac1 = yEdg1Val+(yEdg2Val-yEdg1Val)*yLoc;
-
-    float yFac2 = yEdg3Val+(yEdg4Val-yEdg3Val)*yLoc;
-
-    //
-    //
-
-    float yVal = yFac1+(yFac2-yFac1)*zLoc;
-
-    return yVal;
-
+    vertex[0] = vecField::getYVec(xCell, yCell, zCell);
+    vertex[1] = vecField::getYVec(xCell+1, yCell, zCell);
+    vertex[2] = vecField::getYVec(xCell+1, yCell+1, zCell);
+    vertex[3] = vecField::getYVec(xCell, yCell+1, zCell);
+    vertex[4] = vecField::getYVec(xCell, yCell, zCell+1);
+    vertex[5] = vecField::getYVec(xCell+1, yCell, zCell+1);
+    vertex[6] = vecField::getYVec(xCell+1, yCell+1, zCell+1);
+    vertex[7] = vecField::getYVec(xCell, yCell+1, zCell+1);
+    return vecField::interoplate(xLoc, yLoc, zLoc, vertex);
 }
 
 float vecField::getZVec(float x_, float y_, float z_)
@@ -362,66 +312,17 @@ float vecField::getZVec(float x_, float y_, float z_)
     if(xLoc == 0 && yLoc ==0 && zLoc ==0)
             return vecField::getZVec(xCell, yCell, zCell);
 
-    //
-    //		   n8____________n7
-    //		   /|            /|
-    //		  / |           / |
-    //		 /  |          /  |
-    //    n5/___________n6/  _|
-    //		|   /n4       |   /n3
-    //		|  /          |  /
-    //		| /           | /
-    //		|/____________|/
-    //      n1            n2
-    //
-    //		+x = n1 to n2
-    //		+y = n1 to n4
-    //		+z = n1 to n5
-    //
+    float vertex[8];
 
-    float zCel1Val = vecField::getZVec(xCell, yCell, zCell);
-
-    float zCel2Val = vecField::getZVec(xCell+1, yCell, zCell);
-
-    float zCel3Val = vecField::getZVec(xCell+1, yCell+1, zCell);
-
-    float zCel4Val = vecField::getZVec(xCell, yCell+1, zCell);
-
-    float zCel5Val = vecField::getZVec(xCell, yCell, zCell+1);
-
-    float zCel6Val = vecField::getZVec(xCell+1, yCell, zCell+1);
-
-    float zCel7Val = vecField::getZVec(xCell+1, yCell+1, zCell+1);
-
-    float zCel8Val = vecField::getZVec(xCell, yCell+1, zCell+1);
-
-    //      e1 = n1-n2
-    //      e2 = n4-n3
-    //      e3 = n5-n6
-    //      e4 = n8-n7
-
-    float zEdg1Val = zCel1Val+(zCel2Val-zCel1Val)*xLoc;
-
-    float zEdg2Val = zCel4Val+(zCel3Val-zCel4Val)*xLoc;
-
-    float zEdg3Val = zCel5Val+(zCel6Val-zCel5Val)*xLoc;
-
-    float zEdg4Val = zCel8Val+(zCel7Val-zCel8Val)*xLoc;
-
-    //      face1 = e1-e2 = n1-n2-n3-n4
-    //      face2 = e3-e4 = n5-n6-n7-n8
-
-    float zFac1 = zEdg1Val+(zEdg2Val-zEdg1Val)*yLoc;
-
-    float zFac2 = zEdg3Val+(zEdg4Val-zEdg3Val)*yLoc;
-
-    //
-    //
-
-    float zVal = zFac1+(zFac2-zFac1)*zLoc;
-
-    return zVal;
-
+    vertex[0] = vecField::getZVec(xCell, yCell, zCell);
+    vertex[1] = vecField::getZVec(xCell+1, yCell, zCell);
+    vertex[2] = vecField::getZVec(xCell+1, yCell+1, zCell);
+    vertex[3] = vecField::getZVec(xCell, yCell+1, zCell);
+    vertex[4] = vecField::getZVec(xCell, yCell, zCell+1);
+    vertex[5] = vecField::getZVec(xCell+1, yCell, zCell+1);
+    vertex[6] = vecField::getZVec(xCell+1, yCell+1, zCell+1);
+    vertex[7] = vecField::getZVec(xCell, yCell+1, zCell+1);
+    return vecField::interoplate(xLoc, yLoc, zLoc, vertex);
 }
 
 //X velocity gradient in y direction
@@ -609,66 +510,16 @@ float vecField::UYgrad(float x_, float y_, float z_)
     if(xLoc == 0 && yLoc ==0 && zLoc ==0)
         return vecField::UYgrad(xCell, yCell, zCell);
 
-    //
-    //		   n8____________n7
-    //		   /|            /|
-    //		  / |           / |
-    //		 /  |          /  |
-    //    n5/___________n6/  _|
-    //		|   /n4       |   /n3
-    //		|  /          |  /
-    //		| /           | /
-    //		|/____________|/
-    //      n1            n2
-    //
-    //		+x = n1 to n2
-    //		+y = n1 to n4
-    //		+z = n1 to n5
-    //
-
-    float zCel1Val = vecField::UYgrad(xCell, yCell, zCell);
-
-    float zCel2Val = vecField::UYgrad(xCell+1, yCell, zCell);
-
-    float zCel3Val = vecField::UYgrad(xCell+1, yCell+1, zCell);
-
-    float zCel4Val = vecField::UYgrad(xCell, yCell+1, zCell);
-
-    float zCel5Val = vecField::UYgrad(xCell, yCell, zCell+1);
-
-    float zCel6Val = vecField::UYgrad(xCell+1, yCell, zCell+1);
-
-    float zCel7Val = vecField::UYgrad(xCell+1, yCell+1, zCell+1);
-
-    float zCel8Val = vecField::UYgrad(xCell, yCell+1, zCell+1);
-
-    //      e1 = n1-n2
-    //      e2 = n4-n3
-    //      e3 = n5-n6
-    //      e4 = n8-n7
-
-    float zEdg1Val = zCel1Val+(zCel2Val-zCel1Val)*xLoc;
-
-    float zEdg2Val = zCel4Val+(zCel3Val-zCel4Val)*xLoc;
-
-    float zEdg3Val = zCel5Val+(zCel6Val-zCel5Val)*xLoc;
-
-    float zEdg4Val = zCel8Val+(zCel7Val-zCel8Val)*xLoc;
-
-    //      face1 = e1-e2 = n1-n2-n3-n4
-    //      face2 = e3-e4 = n5-n6-n7-n8
-
-    float zFac1 = zEdg1Val+(zEdg2Val-zEdg1Val)*yLoc;
-
-    float zFac2 = zEdg3Val+(zEdg4Val-zEdg3Val)*yLoc;
-
-    //
-    //
-
-    float zVal = zFac1+(zFac2-zFac1)*zLoc;
-
-    return zVal;
-
+    float vertex[8];
+    vertex[0] = vecField::UYgrad(xCell, yCell, zCell);
+    vertex[1] = vecField::UYgrad(xCell+1, yCell, zCell);
+    vertex[2] = vecField::UYgrad(xCell+1, yCell+1, zCell);
+    vertex[3] = vecField::UYgrad(xCell, yCell+1, zCell);
+    vertex[4] = vecField::UYgrad(xCell, yCell, zCell+1);
+    vertex[5] = vecField::UYgrad(xCell+1, yCell, zCell+1);
+    vertex[6] = vecField::UYgrad(xCell+1, yCell+1, zCell+1);
+    vertex[7] = vecField::UYgrad(xCell, yCell+1, zCell+1);
+    return vecField::interoplate(xLoc, yLoc, zLoc, vertex);
 }
 
 float vecField::UZgrad(float x_, float y_, float z_)
@@ -682,66 +533,16 @@ float vecField::UZgrad(float x_, float y_, float z_)
     if(xLoc == 0 && yLoc ==0 && zLoc ==0)
         return vecField::UZgrad(xCell, yCell, zCell);
 
-    //
-    //		   n8____________n7
-    //		   /|            /|
-    //		  / |           / |
-    //		 /  |          /  |
-    //    n5/___________n6/  _|
-    //		|   /n4       |   /n3
-    //		|  /          |  /
-    //		| /           | /
-    //		|/____________|/
-    //      n1            n2
-    //
-    //		+x = n1 to n2
-    //		+y = n1 to n4
-    //		+z = n1 to n5
-    //
-
-    float zCel1Val = vecField::UZgrad(xCell, yCell, zCell);
-
-    float zCel2Val = vecField::UZgrad(xCell+1, yCell, zCell);
-
-    float zCel3Val = vecField::UZgrad(xCell+1, yCell+1, zCell);
-
-    float zCel4Val = vecField::UZgrad(xCell, yCell+1, zCell);
-
-    float zCel5Val = vecField::UZgrad(xCell, yCell, zCell+1);
-
-    float zCel6Val = vecField::UZgrad(xCell+1, yCell, zCell+1);
-
-    float zCel7Val = vecField::UZgrad(xCell+1, yCell+1, zCell+1);
-
-    float zCel8Val = vecField::UZgrad(xCell, yCell+1, zCell+1);
-
-    //      e1 = n1-n2
-    //      e2 = n4-n3
-    //      e3 = n5-n6
-    //      e4 = n8-n7
-
-    float zEdg1Val = zCel1Val+(zCel2Val-zCel1Val)*xLoc;
-
-    float zEdg2Val = zCel4Val+(zCel3Val-zCel4Val)*xLoc;
-
-    float zEdg3Val = zCel5Val+(zCel6Val-zCel5Val)*xLoc;
-
-    float zEdg4Val = zCel8Val+(zCel7Val-zCel8Val)*xLoc;
-
-    //      face1 = e1-e2 = n1-n2-n3-n4
-    //      face2 = e3-e4 = n5-n6-n7-n8
-
-    float zFac1 = zEdg1Val+(zEdg2Val-zEdg1Val)*yLoc;
-
-    float zFac2 = zEdg3Val+(zEdg4Val-zEdg3Val)*yLoc;
-
-    //
-    //
-
-    float zVal = zFac1+(zFac2-zFac1)*zLoc;
-
-    return zVal;
-
+    float vertex[8];
+    vertex[0] = vecField::UZgrad(xCell, yCell, zCell);
+    vertex[1] = vecField::UZgrad(xCell+1, yCell, zCell);
+    vertex[2] = vecField::UZgrad(xCell+1, yCell+1, zCell);
+    vertex[3] = vecField::UZgrad(xCell, yCell+1, zCell);
+    vertex[4] = vecField::UZgrad(xCell, yCell, zCell+1);
+    vertex[5] = vecField::UZgrad(xCell+1, yCell, zCell+1);
+    vertex[6] = vecField::UZgrad(xCell+1, yCell+1, zCell+1);
+    vertex[7] = vecField::UZgrad(xCell, yCell+1, zCell+1);
+    return vecField::interoplate(xLoc, yLoc, zLoc, vertex);
 }
 
 float vecField::VXgrad(float x_, float y_, float z_)

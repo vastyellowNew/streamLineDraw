@@ -142,7 +142,16 @@ void GLWidget::paintGL()
                     float xLoc = m_ribbon[0][noOfRibbons].x() + ((m_ribbon[0][noOfRibbons+1].x() - m_ribbon[0][noOfRibbons].x())/2);
                     float yLoc = m_ribbon[0][noOfRibbons].y() + ((m_ribbon[0][noOfRibbons+1].y() - m_ribbon[0][noOfRibbons].y())/2);
                     float zLoc = m_ribbon[0][noOfRibbons].z() + ((m_ribbon[0][noOfRibbons+1].z() - m_ribbon[0][noOfRibbons].z())/2);*/
+                    glDisable(GL_TEXTURE_1D);
                     GLWidget::drawBox(floor(xLoc), floor(yLoc), floor(zLoc) );
+                    float sc = 10;
+                    glColor3f(1,0,0);
+                    glBegin(GL_LINES);
+                    glVertex3f(xLoc,yLoc,zLoc);
+                    glVertex3f(xLoc+(mData->getXVec(xLoc,yLoc,zLoc))*sc,yLoc+(mData->getYVec(xLoc,yLoc,zLoc))*sc,zLoc+(mData->getZVec(xLoc,yLoc,zLoc))*sc);
+                    glEnd();
+                    glColor3f(1,1,1);
+                    glEnable(GL_TEXTURE_1D);
                 }
 
          }
@@ -219,8 +228,28 @@ void GLWidget::drawBox(int x, int y, int z)
     glVertex3f(x, y+1, z+1);
     glEnd();
 
+
+    glColor3f(1,0,0);
+    GLWidget::drawVec(x,y,z);
+    GLWidget::drawVec(x+1,y,z);
+    GLWidget::drawVec(x,y+1,z);
+    GLWidget::drawVec(x,y,z+1);
+    GLWidget::drawVec(x+1,y+1,z);
+    GLWidget::drawVec(x+1,y,z+1);
+    GLWidget::drawVec(x+1,y+1,z+1);
+    GLWidget::drawVec(x,y+1,z+1);
+
     glColor3f(1,1,1);
     glLineWidth(2);
+}
+
+void GLWidget::drawVec(int x, int y, int z)
+{
+    float sc = 10;
+    glBegin(GL_LINES);
+    glVertex3f(x,y,z);
+    glVertex3f(x+(mData->getXVec(x,y,z))*sc,y+(mData->getYVec(x,y,z))*sc,z+(mData->getZVec(x,y,z))*sc);
+    glEnd();
 }
 
 //void GLWidget::twoRibbon()

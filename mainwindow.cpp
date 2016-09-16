@@ -1042,10 +1042,10 @@ void MainWindow::on_progressSlider_valueChanged(int value)
 
 void MainWindow::on_forwardButt_clicked()
 {
-    this->ui->progressSlider->setValue(this->ui->progressSlider->value()+1);
+    this->ui->progressSlider->setValue(this->ui->progressSlider->value()+2);
 }
 
 void MainWindow::on_backButt_clicked()
 {
-    this->ui->progressSlider->setValue(this->ui->progressSlider->value()-1);
+    this->ui->progressSlider->setValue(this->ui->progressSlider->value()-2);
 }

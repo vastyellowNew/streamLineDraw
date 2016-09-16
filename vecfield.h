@@ -48,6 +48,8 @@ public:
     float WXgrad(float x_, float y_, float z_);
     float WYgrad(float x_, float y_, float z_);
     float angV(float x_, float y_, float z_);
+private:
+    float interoplate(float x_, float y_, float z_, float *cellV);
 };
 
 #endif // VECFIELD_H
