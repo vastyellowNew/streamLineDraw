@@ -85,6 +85,12 @@ private slots:
 
     void on_showSeedsBox_clicked(bool checked);
 
+    void on_progressSlider_valueChanged(int value);
+
+    void on_forwardButt_clicked();
+
+    void on_backButt_clicked();
+
 private:
     Ui::MainWindow *ui;
     void calculations();

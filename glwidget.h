@@ -111,6 +111,7 @@ private:
     void twoRibbon();
     void drawArrow(float x2, float y2, float z2, float x1, float y1, float z1);
     void drawFrame();
+    void drawBox(int x, int y, int z);
 };
 
 #endif // GLWIDGET_H

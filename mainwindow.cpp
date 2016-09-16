@@ -29,6 +29,9 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->rescaleBox->setEnabled(false);
     this ->ui->GLwidget->mTextureNo = 0;
     this ->ui->LegGLWidget->mTextureNo = 0;
+    this->ui->GLwidget->mPCRibbons = 0;
+    this->ui->progressSlider->setMaximum(0);
+    this->ui->progressSlider->setValue(0);
 }
 
 MainWindow::~MainWindow()
@@ -105,8 +108,8 @@ void MainWindow::dataP()
     mheliMagFFast.clear();
     mSeedPoints.reset();
     mSeedPoints.setSize(xSize, ySize, zSize);
-    this->ui->GLwidget->mPCRibbons = 100;
-    this->ui->GLwidget->mNoOfRibbs = 100;
+    //this->ui->GLwidget->mPCRibbons = 100;
+    //this->ui->GLwidget->mNoOfRibbs = 100;
     //malloc to allocate memory size of speedField
     speedField=(float *) malloc(xSize*ySize*zSize*sizeof(float));
 
@@ -470,8 +473,8 @@ void MainWindow::matRibbon(float x, float y, float z)
             m_ribbon.prepend(QVector3D((seed[0]-norm[0]*(ribWidth/2)), (seed[1]-norm[1]*(ribWidth/2)), (seed[2]-norm[2]*(ribWidth/2))));
             m_ribbon.prepend(QVector3D((seed[0]+norm[0]*(ribWidth/2)), (seed[1]+norm[1]*(ribWidth/2)), (seed[2]+norm[2]*(ribWidth/2))));
         }
-
-        mSeedPoints.setPoint(seed[0], seed[1], seed[2]);
+        this->ui->GLwidget->mNoOfRibbs = i*2;
+        this->ui->progressSlider->setMaximum(i*2);
         //Move to next point
         seed[0] += inter[0];
         seed[1] += inter[1];
@@ -1029,4 +1032,20 @@ void MainWindow::on_showSeedsBox_clicked(bool checked)
 {
     this->ui->GLwidget->mDrawSeed = checked;
     this->ui->GLwidget->update();
+}
+
+void MainWindow::on_progressSlider_valueChanged(int value)
+{
+    this->ui->GLwidget->mPCRibbons = value;
+    this->ui->GLwidget->update();
+}
+
+void MainWindow::on_forwardButt_clicked()
+{
+    this->ui->progressSlider->setValue(this->ui->progressSlider->value()+1);
+}
+
+void MainWindow::on_backButt_clicked()
+{
+    this->ui->progressSlider->setValue(this->ui->progressSlider->value()-1);
 }

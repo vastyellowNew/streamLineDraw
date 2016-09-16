@@ -104,9 +104,9 @@ void GLWidget::paintGL()
         float colF;
 
 //        GLWidget::twoRibbon();
-        int noOfRibbons = (int)(m_ribbon.length()*mPCRibbons/mNoOfRibbs);
+        int noOfRibbons = (int)(m_ribbon[0].length()*mPCRibbons/mNoOfRibbs);
 
-        for (int i = 0; i < noOfRibbons; ++i)
+        for (int i = 0; i <m_ribbon.length() ; ++i)
         {
                 if (mRibSeed.length() > 0 && mDrawSeed)
                 {
@@ -118,12 +118,16 @@ void GLWidget::paintGL()
                     glColor3f(1,1,1);
                     glEnable(GL_TEXTURE_1D);
                 }
+                float xLoc;
+                float yLoc;
+                float zLoc;
                 glBegin(GL_LINE_STRIP);
-                for (int j = 0; j <m_ribbon[i].length(); j+=2)
+                for (int j = 0; j <noOfRibbons; j+=2)
                 {
-                    float xLoc = m_ribbon[i][j].x() + ((m_ribbon[i][j+1].x() - m_ribbon[i][j].x())/2);
-                    float yLoc = m_ribbon[i][j].y() + ((m_ribbon[i][j+1].y() - m_ribbon[i][j].y())/2);
-                    float zLoc = m_ribbon[i][j].z() + ((m_ribbon[i][j+1].z() - m_ribbon[i][j].z())/2);
+                    xLoc = m_ribbon[i][j].x() + ((m_ribbon[i][j+1].x() - m_ribbon[i][j].x())/2);
+                    yLoc = m_ribbon[i][j].y() + ((m_ribbon[i][j+1].y() - m_ribbon[i][j].y())/2);
+                    zLoc = m_ribbon[i][j].z() + ((m_ribbon[i][j+1].z() - m_ribbon[i][j].z())/2);
+                    //GLWidget::drawBox(floor(xLoc), floor(yLoc), floor(zLoc) );
                     if (m_colourHeli ==1) colF = ((m_heliField.getValue(xLoc, yLoc, zLoc)-minScal)*sFactor);
                     else if (m_colourHeli ==2) colF = ((fabs(m_heliField.getValue(xLoc, yLoc, zLoc))-minScal)*sFactor);
                     else colF = ((mData->getSpeed(xLoc,yLoc,zLoc)-minScal)*sFactor);
@@ -133,6 +137,14 @@ void GLWidget::paintGL()
                     glVertex3f(xLoc, yLoc, zLoc);
                 }
                 glEnd();
+                if (noOfRibbons +1 < m_ribbon[0].length())
+                {/*
+                    float xLoc = m_ribbon[0][noOfRibbons].x() + ((m_ribbon[0][noOfRibbons+1].x() - m_ribbon[0][noOfRibbons].x())/2);
+                    float yLoc = m_ribbon[0][noOfRibbons].y() + ((m_ribbon[0][noOfRibbons+1].y() - m_ribbon[0][noOfRibbons].y())/2);
+                    float zLoc = m_ribbon[0][noOfRibbons].z() + ((m_ribbon[0][noOfRibbons+1].z() - m_ribbon[0][noOfRibbons].z())/2);*/
+                    GLWidget::drawBox(floor(xLoc), floor(yLoc), floor(zLoc) );
+                }
+
          }
 
     }
@@ -169,6 +181,42 @@ void GLWidget::drawFrame()
     glVertex3f(xSize, ySize, zSize);
     glVertex3f(0.0f, ySize, 0.0f);
     glVertex3f(0.0f, ySize, zSize);
+    glEnd();
+
+    glColor3f(1,1,1);
+    glLineWidth(2);
+}
+
+void GLWidget::drawBox(int x, int y, int z)
+{
+    glDisable(GL_TEXTURE_1D);
+
+    glColor3f(0,0,0);
+    glLineWidth(2);
+    //glutSolidSphere(1,20,20);
+
+    // Draw single continious line as outline:
+    glBegin(GL_LINE_STRIP);
+    glVertex3f(x, y, z );
+    glVertex3f(x+1, y, z);
+    glVertex3f(x+1, y+1, z);
+    glVertex3f(x, y+1, z);
+    glVertex3f(x, y, z);
+    glVertex3f(x, y, z+1);
+    glVertex3f(x+1, y, z+1);
+    glVertex3f(x+1, y+1, z+1);
+    glVertex3f(x, y+1, z+1);
+    glVertex3f(x, y, z+1);
+    glEnd(); // GL_LINES
+
+    //Add extraedges to complete outline
+    glBegin(GL_LINES);
+    glVertex3f(x+1, y, z);
+    glVertex3f(x+1, y, z+1);
+    glVertex3f(x+1, y+1, z);
+    glVertex3f(x+1, y+1, z+1);
+    glVertex3f(x, y+1, z);
+    glVertex3f(x, y+1, z+1);
     glEnd();
 
     glColor3f(1,1,1);
